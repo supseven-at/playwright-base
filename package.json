@@ -1,0 +1,18 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.41.1",
+    "@types/node": "^20.11.10",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.1"
+  },
+  "scripts": {
+    "test-ui": "npx playwright test --ui",
+    "test": "npx playwright test --reporter=list",
+    "report": "npx playwright test"
+  },
+  "dependencies": {}
+}
