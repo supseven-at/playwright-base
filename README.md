@@ -21,6 +21,7 @@ bisherige tests:
 
 * im app/tests (sofern vorhanden), das repository in ein eigenes verzeichnis clonen
   * beispiel: `app/tests/playwright-base`
+* das git verzeichnis entfernen im playwright-base test verzeichnis ;)
 * in das verzeichnis wechseln und
   * `nvm use` ausführen
   * `yarn install`
