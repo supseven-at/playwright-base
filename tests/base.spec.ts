@@ -1,6 +1,7 @@
 import {expect, Page, test} from '@playwright/test';
 import axios from "axios";
 import {setCookie} from "../functions/global-functions";
+import AxeBuilder from '@axe-core/playwright';
 
 test('has title', async ({page, context}) => {
 	await setCookie(context);
@@ -55,6 +56,22 @@ test('w3c checks of key templates', async ({page, context}) => {
         }
 
         expect(validationResult.messages.length).toBe(0);
+    }
+});
+
+test('a11y tests of key templates', async ({page, context}) => {
+    await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
+
+    const urls = process.env.TEST_W3C_URLS.split(',');
+
+    for (const url of urls) {
+        await page.goto(url);
+
+        const accessibilityScanResults = await new AxeBuilder({ page })
+            .exclude('#content > .container')
+            .analyze();
+
+        expect(accessibilityScanResults.violations).toEqual([]);
     }
 });
 
