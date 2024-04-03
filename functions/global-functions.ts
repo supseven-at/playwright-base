@@ -1,5 +1,5 @@
-import {Context} from "node:vm";
-import axios from "axios";
+import { Context } from 'node:vm';
+import axios from 'axios';
 
 /**
  * Sets a cookie in the given context.
@@ -11,11 +11,8 @@ import axios from "axios";
  * @return {Promise<void>} - A promise that resolves when the cookie is set.
  */
 export async function setCookie(context: Context, cValue = process.env.COOKIE_VALUE, url = process.env.BASE_URL) {
-    await context.addCookies([
-        {name: process.env.COOKIE_NAME, value: cValue, url: url},
-    ]);
+    await context.addCookies([{ name: process.env.COOKIE_NAME, value: cValue, url: url }]);
 }
-
 
 /**
  * Get the path from a given URL.
@@ -36,15 +33,11 @@ export function getPathFromUrl(url: string) {
  */
 export async function validateHTML(htmlContent) {
     try {
-        const response = await axios.post(
-            "https://validator.w3.org/nu/?out=json",
-            htmlContent,
-            {
-                headers: {
-                    "Content-Type": "text/html; charset=utf-8",
-                },
+        const response = await axios.post('https://validator.w3.org/nu/?out=json', htmlContent, {
+            headers: {
+                'Content-Type': 'text/html; charset=utf-8',
             },
-        );
+        });
 
         return response.data;
     } catch (error) {

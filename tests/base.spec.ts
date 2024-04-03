@@ -1,23 +1,23 @@
-import { expect, test } from "@playwright/test";
-import { setCookie } from "../functions/global-functions";
+import { expect, test } from '@playwright/test';
+import { setCookie } from '../functions/global-functions';
 
-test("has title", async ({ page, context }) => {
+test('has title', async ({ page, context }) => {
     await setCookie(context);
 
-    await page.goto("/");
+    await page.goto('/');
     await expect(page).toHaveTitle(process.env.TEST_TITLE);
 });
 
-test("consent", async ({ page }) => {
-    await page.goto("/");
+test('consent', async ({ page }) => {
+    await page.goto('/');
 
-    await expect(page.locator("#supi__overlay")).toBeVisible();
-    await expect(page.locator("#supi__banner")).toBeVisible();
-    await expect(page.locator("#supi__individualSwitchTo")).toBeVisible();
-    await expect(page.locator("#supi__dismiss")).toBeVisible();
-    await expect(page.locator("#supi__allow")).toBeVisible();
-    await page.click("#supi__allow");
-    await expect(page.locator("#supi__overlay")).toBeHidden();
+    await expect(page.locator('#supi__overlay')).toBeVisible();
+    await expect(page.locator('#supi__banner')).toBeVisible();
+    await expect(page.locator('#supi__individualSwitchTo')).toBeVisible();
+    await expect(page.locator('#supi__dismiss')).toBeVisible();
+    await expect(page.locator('#supi__allow')).toBeVisible();
+    await page.click('#supi__allow');
+    await expect(page.locator('#supi__overlay')).toBeHidden();
 
     const cookies = await page.context().cookies();
     let found = false;
@@ -32,16 +32,14 @@ test("consent", async ({ page }) => {
     expect(found).toBe(true);
 });
 
-test("has 404 page", async ({ page, context }) => {
+test('has 404 page', async ({ page, context }) => {
     await setCookie(context);
-    const response = await page.goto("/i-dont-exist");
-    await expect(
-        page.getByRole("heading", { name: "Page Not Found" }),
-    ).toBeVisible();
+    const response = await page.goto('/i-dont-exist');
+    await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
     expect(response.status() === 404);
 });
 
-test('has robots.txt', async ({page, context}) => {
+test('has robots.txt', async ({ page, context }) => {
     await setCookie(context);
 
     const response = await page.goto('/robots.txt');
@@ -62,7 +60,7 @@ test('has robots.txt', async ({page, context}) => {
     expect(correctRobotsFileContent).toBe(true);
 });
 
-test('has sitemap.xml', async ({page, context}) => {
+test('has sitemap.xml', async ({ page, context }) => {
     await setCookie(context);
     const response = await page.goto('/sitemap.xml');
     expect(response.status() === 200).toBe(true);

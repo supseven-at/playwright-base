@@ -1,33 +1,25 @@
-import { expect, Page, test } from "@playwright/test";
-import { setCookie } from "../functions/global-functions";
-import AxeBuilder from "@axe-core/playwright";
+import { expect, Page, test } from '@playwright/test';
+import { setCookie } from '../functions/global-functions';
+import AxeBuilder from '@axe-core/playwright';
 
-const tags = [
-    "wcag2a",
-    "wcag2aa",
-    "wcag21a",
-    "wcag21aa",
-    "wcag22aa",
-    "best-practice",
-];
+const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
-test("key templates", async ({ page, context }) => {
+test('key templates', async ({ page, context }) => {
     await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
 
-    const urls = process.env.KEY_URLS.split(",");
+    const urls = process.env.KEY_URLS.split(',');
 
     for (const url of urls) {
         await page.goto(url);
 
         const accessibilityScanResults = await new AxeBuilder({ page })
-            .exclude("#content > .container")
+            .exclude('#content > .container')
             .withTags(tags)
             .analyze();
 
         expect(accessibilityScanResults.violations).toEqual([]);
     }
 });
-
 
 // example tests
 
