@@ -1,4 +1,4 @@
-import { expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { setCookie } from "../functions/global-functions";
 
 test("has title", async ({ page, context }) => {
@@ -39,4 +39,31 @@ test("has 404 page", async ({ page, context }) => {
         page.getByRole("heading", { name: "Page Not Found" }),
     ).toBeVisible();
     expect(response.status() === 404);
+});
+
+test('has robots.txt', async ({page, context}) => {
+    await setCookie(context);
+
+    const response = await page.goto('/robots.txt');
+    let correctRobotsFileContent = false;
+
+    if (response.status() === 200) {
+        const txt = await response.text();
+
+        if (txt.length > 0) {
+            correctRobotsFileContent = true;
+        }
+
+        if (txt.includes('User-agent: *') && txt.includes('Disallow:')) {
+            correctRobotsFileContent = true;
+        }
+    }
+
+    expect(correctRobotsFileContent).toBe(true);
+});
+
+test('has sitemap.xml', async ({page, context}) => {
+    await setCookie(context);
+    const response = await page.goto('/sitemap.xml');
+    expect(response.status() === 200).toBe(true);
 });

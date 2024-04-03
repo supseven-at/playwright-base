@@ -1,6 +1,5 @@
 import { expect, Page, test } from "@playwright/test";
-import axios from "axios";
-import { setCookie } from "../functions/global-functions";
+import { setCookie, validateHTML } from "../functions/global-functions";
 
 test("w3c checks of key templates", async ({ page, context }) => {
     await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
@@ -25,21 +24,3 @@ test("w3c checks of key templates", async ({ page, context }) => {
         expect(validationResult.messages.length).toBe(0);
     }
 });
-
-async function validateHTML(htmlContent) {
-    try {
-        const response = await axios.post(
-            "https://validator.w3.org/nu/?out=json",
-            htmlContent,
-            {
-                headers: {
-                    "Content-Type": "text/html; charset=utf-8",
-                },
-            },
-        );
-
-        return response.data;
-    } catch (error) {
-        console.error(error);
-    }
-}

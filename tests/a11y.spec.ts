@@ -2,6 +2,15 @@ import { expect, Page, test } from "@playwright/test";
 import { setCookie } from "../functions/global-functions";
 import AxeBuilder from "@axe-core/playwright";
 
+const tags = [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa",
+    "best-practice",
+];
+
 test("key templates", async ({ page, context }) => {
     await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
 
@@ -12,20 +21,17 @@ test("key templates", async ({ page, context }) => {
 
         const accessibilityScanResults = await new AxeBuilder({ page })
             .exclude("#content > .container")
-            .withTags([
-                "wcag2a",
-                "wcag2aa",
-                "wcag21a",
-                "wcag21aa",
-                "wcag22aa",
-                "best-practice",
-            ])
+            .withTags(tags)
             .analyze();
 
         expect(accessibilityScanResults.violations).toEqual([]);
     }
 });
 
+
+// example tests
+
+/*
 test("main navigation desktop", async ({ page, context }, testInfo) => {
     if (testInfo.project.name === "chromium") {
         await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
@@ -174,3 +180,4 @@ test("quicklinks mobile", async ({ page, context }, testInfo) => {
         console.log("quicklinks desktop dont need a test");
     }
 });
+*/
