@@ -9,6 +9,8 @@ bisherige tests:
 - startseite hat einen page title
 - startseite hat die supi extension implentiert und cookies lassen sich setzen
 - projekt hat eine 404 seite mit einer entsprechenden h1
+- projekt hat eine robots.txt
+- projekt hat eine sitemap.xml
 - key templates werden einem w3c check unterzogen
 - key templates werden einem a11y check unterzogen
 
