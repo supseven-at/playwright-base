@@ -10,7 +10,7 @@ bisherige tests:
 - startseite hat die supi extension implentiert und cookies lassen sich setzen
 - projekt hat eine 404 seite mit einer entsprechenden h1
 - key templates werden einem w3c check unterzogen
-- ... to be continued
+- key templates werden einem a11y check unterzogen
 
 > alle einstellungen werden in einer dotenv datei im test root vorgenommen.
 
