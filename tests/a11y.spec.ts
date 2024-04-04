@@ -1,11 +1,11 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { setCookie } from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 test('key templates', async ({ page, context }) => {
-    await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
+    await setCookie(context);
 
     const urls = process.env.KEY_URLS.split(',');
 

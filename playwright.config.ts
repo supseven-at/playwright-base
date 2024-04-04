@@ -61,5 +61,13 @@ export default defineConfig({
             },
             testMatch: '**/base.spec.ts',
         },
+        {
+            name: 'EXAMPLE: structured-data',
+            use: {
+                ...devices['Desktop Chrome'],
+                baseURL: 'https://at.austriaemail.docker/',
+            },
+            testMatch: ['**/structured-data.spec.ts'],
+        },
     ],
 });

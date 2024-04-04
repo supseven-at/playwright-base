@@ -1,8 +1,8 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { setCookie, validateHTML } from '../functions/global-functions';
 
 test('w3c checks of key templates', async ({ page, context }) => {
-    await setCookie(context, process.env.COOKIE_VALUE_NONE_ALLOWED);
+    await setCookie(context);
 
     const urls = process.env.KEY_URLS.split(',');
 
