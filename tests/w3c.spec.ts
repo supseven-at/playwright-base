@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import {getOptions, setCookie, validateHTML} from '../functions/global-functions';
+import { getOptions, setCookie, validateHTML } from '../functions/global-functions';
 
 test('w3c checks of key templates', async ({ page, context }) => {
     await setCookie(context);

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import {getOptions, setCookie} from '../functions/global-functions';
+import { getOptions, setCookie } from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
