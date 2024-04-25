@@ -27,42 +27,42 @@ export default defineConfig({
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.BASE_URL,
             },
-            testMatch: ['**/base.spec.ts', '**/w3c.spec.ts', '**/a11y.spec.ts'],
+            testMatch: ['**/base.spec.ts', '**/w3c.spec.ts', '**/a11y.spec.ts', '**/visual-regressions.spec.ts'],
         },
         {
             name: 'firefox',
             use: {
-                ...devices['Desktop Chrome'],
+                ...devices['Desktop Firefox'],
                 baseURL: process.env.BASE_URL,
             },
-            testMatch: '**/base.spec.ts',
+            testMatch: ['**/base.spec.ts', '**/visual-regressions.spec.ts'],
         },
         {
-            name: 'webkit',
+            name: 'safari',
             use: {
-                ...devices['Desktop Chrome'],
+                ...devices['Desktop Safari'],
                 baseURL: process.env.BASE_URL,
             },
-            testMatch: '**/base.spec.ts',
+            testMatch: ['**/base.spec.ts', '**/visual-regressions.spec.ts'],
         },
         {
             name: 'mobile chrome',
             use: {
-                ...devices['Pixel 5'],
+                ...devices['Pixel 7'],
                 baseURL: process.env.BASE_URL,
             },
-            testMatch: ['**/base.spec.ts'],
+            testMatch: ['**/base.spec.ts', '**/visual-regressions.spec.ts'],
         },
         {
             name: 'mobile ios',
             use: {
-                ...devices['iPhone 12'],
+                ...devices['iPhone 14'],
                 baseURL: process.env.BASE_URL,
             },
-            testMatch: '**/base.spec.ts',
+            testMatch: ['**/base.spec.ts', '**/visual-regressions.spec.ts'],
         },
         {
-            name: 'EXAMPLE: structured-data',
+            name: 'structured-data',
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: 'https://at.austriaemail.docker/',

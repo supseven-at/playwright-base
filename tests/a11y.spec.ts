@@ -1,16 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { setCookie } from '../functions/global-functions';
+import {getOptions, setCookie} from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 test('key templates', async ({ page, context }) => {
     await setCookie(context);
+    const opts = await getOptions();
 
-    const urls = process.env.KEY_URLS.split(',');
-
-    for (const url of urls) {
-        await page.goto(url);
+    for (let [key, option] of Object.entries(opts)) {
+        await page.goto(option.url);
 
         const accessibilityScanResults = await new AxeBuilder({ page })
             .exclude('#content > .container')

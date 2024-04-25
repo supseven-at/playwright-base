@@ -44,3 +44,70 @@ export async function validateHTML(htmlContent) {
         console.error(error);
     }
 }
+
+/**
+ * Retrieves options from environment variables and returns them as an object.
+ *
+ * @returns {Promise<{[key: number]: ComparisonOption}>} The options extracted from environment variables.
+ */
+export async function getOptions() {
+    type ComparisonOption = {
+        url?: string;
+        maxDiffPixelRatio?: number;
+        maxDiffPixels?: number;
+        disabled?: boolean;
+    };
+
+    const opts: {
+        [key: number]: ComparisonOption;
+    } = {};
+
+    for (const key in process.env) {
+        if (key.startsWith('KEY_URL_')) {
+            const index = parseInt(key.replace('KEY_URL_', ''), 10);
+            if (!opts[index]) {
+                opts[index] = {};
+            }
+            opts[index]['url'] = process.env[key];
+        }
+
+        if (key.startsWith('REGRESSION_RATIO_')) {
+            const index = parseInt(key.replace('REGRESSION_RATIO_', ''), 10);
+            if (!opts[index]) {
+                opts[index] = {};
+            }
+            opts[index]['maxDiffPixelRatio'] = parseFloat(process.env[key]);
+        }
+
+        if (key.startsWith('REGRESSION_PIXEL_')) {
+            const index = parseInt(key.replace('REGRESSION_PIXEL_', ''), 10);
+            if (!opts[index]) {
+                opts[index] = {};
+            }
+            opts[index]['maxDiffPixels'] = parseInt(process.env[key]);
+        }
+
+        if (key.startsWith('REGRESSION_DISABLED_')) {
+            const index = parseInt(key.replace('REGRESSION_DISABLED_', ''), 10);
+            if (!opts[index]) {
+                opts[index] = {};
+            }
+            opts[index]['disabled'] = !!process.env[key];
+        }
+    }
+
+    return opts;
+}
+
+/**
+ * Retrieves the file name for a given string and index.
+ *
+ * @param {string} string - The input string.
+ * @param {number} i - The index value.
+ * @return {Promise<string>} - The file name.
+ */
+export async function getFileName(string: string) {
+    string = string === '/' ? '/startpage' : string;
+
+    return string.replace('/', '');
+}
