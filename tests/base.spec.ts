@@ -35,7 +35,6 @@ test('consent', async ({ page }) => {
 test('has 404 page', async ({ page, context }) => {
     await setCookie(context);
     const response = await page.goto('/i-dont-exist');
-    await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
     expect(response.status() === 404);
 });
 

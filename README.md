@@ -13,6 +13,7 @@ bisherige tests:
 -   projekt hat eine sitemap.xml
 -   key templates werden einem w3c check unterzogen
 -   key templates werden einem a11y check unterzogen
+-   key templates werden einem Lighthouse check unterzogen (a11y, performance, seo, best-practices). Dabei geht ein Check durch, wenn der Score über 90 ist.
 
 > alle einstellungen werden in einer dotenv datei im test root vorgenommen.
 
