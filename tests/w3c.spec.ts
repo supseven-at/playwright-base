@@ -17,12 +17,23 @@ test('w3c checks of key templates', async ({ page, context }) => {
         // oder nicht in unserer hand liegt (externe dinge zb)
         /*
         if (validationResult.messages.length > 0) {
-            validationResult.messages = validationResult.messages.filter((k: any) => {
-                return (
-                    k.message !==
-                    'Attribute “aria-required” is unnecessary for elements that have attribute “required”.'
-                );
-            });
+            const ignoredMessages = [
+                /^Attribute “pid” not allowed on element/,
+                /^Attribute “element-type” not allowed on element/,
+                /^Duplicate ID/,
+                /^The first occurrence/,
+                /^Element “style” not allowed as child of element/,
+                'Bad value “” for attribute “id” on element “script”: An ID must not be the empty string.',
+                'The “type” attribute is unnecessary for JavaScript resources.',
+                /^Bad value “(.*)” for attribute “autocomplete”/,
+                'Text run is not in Unicode Normalization Form C.',
+            ];
+
+            validationResult.messages = validationResult.messages.filter((k: any) =>
+                !ignoredMessages.some((ignoredMessage: any) =>
+                    ignoredMessage instanceof RegExp ? ignoredMessage.test(k.message) : ignoredMessage === k.message
+                )
+            );
         }
         */
 
