@@ -30,17 +30,6 @@ export default defineConfig({
             testMatch: ['**/base.spec.ts', '**/w3c.spec.ts', '**/a11y.spec.ts', '**/visual-regressions.spec.ts'],
         },
         {
-            name: 'chromium for lighthouse',
-            use: {
-                ...devices['Desktop Chrome'],
-                baseURL: process.env.BASE_URL,
-                launchOptions: {
-                    args: ['--remote-debugging-port=9222'],
-                },
-            },
-            testMatch: ['**/lighthouse.spec.ts'],
-        },
-        {
             name: 'firefox',
             use: {
                 ...devices['Desktop Firefox'],
@@ -79,6 +68,17 @@ export default defineConfig({
                 baseURL: 'https://at.austriaemail.docker/',
             },
             testMatch: ['**/structured-data.spec.ts'],
+        },
+        {
+            name: 'chromium for lighthouse',
+            use: {
+                ...devices['Desktop Chrome'],
+                baseURL: process.env.BASE_URL,
+                launchOptions: {
+                    args: ['--remote-debugging-port=9222'],
+                },
+            },
+            testMatch: ['**/lighthouse.spec.ts'],
         },
     ],
 });

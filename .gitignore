@@ -6,3 +6,4 @@
 /playwright/.cache/
 /.idea
 *-snapshots
+a11y-audit.json
