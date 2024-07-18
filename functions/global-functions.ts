@@ -111,3 +111,39 @@ export async function getFileName(string: string) {
 
     return string.replace('/', '');
 }
+
+/**
+ * Parses the given A11y JSON data and extracts violations information.
+ *
+ * @param {Object} data - The A11y JSON data to be parsed.
+ * @return {string} - The JSON string representation of the extracted violations.
+ */
+export function parseA11yJson(data: Object) {
+    type Violations = {
+        impact?: string;
+        description?: string;
+        targets?: string[];
+    };
+
+    const violations: {
+        [key: string]: Violations;
+    } = {};
+
+    for (let [key, audit] of Object.entries(data)) {
+        for (let [k, violation] of Object.entries(audit.violations)) {
+            violations[violation['id']] = {
+                impact: violation['impact'],
+                description: violation['description'],
+                targets: [],
+            };
+
+            violation['nodes'].forEach((node: []) => {
+                node['target'].forEach((target: string) => {
+                    violations[violation['id']]['targets'].push(target);
+                });
+            });
+        }
+    }
+
+    return JSON.stringify(violations, null, 2);
+}

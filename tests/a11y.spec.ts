@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { getOptions, setCookie } from '../functions/global-functions';
+import { getOptions, parseA11yJson, setCookie } from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
 import fs from 'fs';
 
@@ -47,8 +47,9 @@ test('key templates', async ({ page, context }) => {
     }
 
     if (Object.keys(errors).length > 0) {
-        const jsonObjectString = JSON.stringify(errors, null, 2);
-        fs.writeFileSync('a11y-audit.json', jsonObjectString);
+        const errorsComplete = JSON.stringify(errors, null, 2);
+        fs.writeFileSync('a11y-audit-complete.json', errorsComplete);
+        fs.writeFileSync('a11y-audit-compact.json', parseA11yJson(errors));
     }
 
     expect(Object.keys(errors).length).toEqual(0);
