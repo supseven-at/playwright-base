@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { getOptions, parseA11yJson, sanitizeString, setCookie } from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
+// @ts-ignore
 import fs from 'fs';
 import { createHtmlReport } from 'axe-html-reporter';
 
