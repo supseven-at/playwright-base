@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { getOptions, parseA11yJson, setCookie } from '../functions/global-functions';
+import { getOptions, parseA11yJson, sanitizeString, setCookie } from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
 import fs from 'fs';
+import { createHtmlReport } from 'axe-html-reporter';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
@@ -43,13 +44,22 @@ test('key templates', async ({ page, context }) => {
             errors[key] = errors[key] || {};
             errors[key]['url'] = process.env.BASE_URL + option.url;
             errors[key]['violations'] = accessibilityScanResults.violations;
+
+            createHtmlReport({
+                results: { violations: accessibilityScanResults.violations },
+                options: {
+                    projectKey: 'MERA: ' + option.url,
+                    outputDir: 'a11y-reports',
+                    reportFileName: `${sanitizeString(option.url)}.html`,
+                },
+            });
         }
     }
 
     if (Object.keys(errors).length > 0) {
         const errorsComplete = JSON.stringify(errors, null, 2);
-        fs.writeFileSync('a11y-audit-complete.json', errorsComplete);
-        fs.writeFileSync('a11y-audit-compact.json', parseA11yJson(errors));
+        fs.writeFileSync('./a11y-reports/a11y-audit-complete.json', errorsComplete);
+        fs.writeFileSync('./a11y-reports/a11y-audit-compact.json', parseA11yJson(errors));
     }
 
     expect(Object.keys(errors).length).toEqual(0);

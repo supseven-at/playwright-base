@@ -147,3 +147,20 @@ export function parseA11yJson(data: Object) {
 
     return JSON.stringify(violations, null, 2);
 }
+
+/**
+ * Sanitizes a given string by removing any leading slashes, replacing slashes with dashes,
+ * removing any non-alphanumeric characters (except dashes and spaces), and converting the string to lowercase.
+ *
+ * @param {string} input - The string to be sanitized.
+ * @returns {string} - The sanitized string.
+ */
+export function sanitizeString(input: string) {
+    const sanitizedString = input
+        .replace(/^\//, '')
+        .replace(/\//g, '-')
+        .replace(/[\s\W-]+/g, '-')
+        .toLowerCase();
+
+    return sanitizedString === '' ? 'index' : sanitizedString;
+}
