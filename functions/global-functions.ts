@@ -123,6 +123,7 @@ export function parseA11yJson(data: Object) {
         impact?: string;
         description?: string;
         targets?: string[];
+        urls?: string[];
     };
 
     const violations: {
@@ -131,15 +132,24 @@ export function parseA11yJson(data: Object) {
 
     for (let [key, audit] of Object.entries(data)) {
         for (let [k, violation] of Object.entries(audit.violations)) {
-            violations[violation['id']] = {
-                impact: violation['impact'],
-                description: violation['description'],
-                targets: [],
-            };
+            if (!violations[violation['id']]) {
+                violations[violation['id']] = {
+                    impact: violation['impact'],
+                    description: violation['description'],
+                    targets: [],
+                    urls: [],
+                };
+            }
 
             violation['nodes'].forEach((node: []) => {
                 node['target'].forEach((target: string) => {
-                    violations[violation['id']]['targets'].push(target);
+                    if (!violations[violation['id']]['targets'].includes(target)) {
+                        violations[violation['id']]['targets'].push(target);
+                    }
+
+                    if (!violations[violation['id']]['urls'].includes(audit.url)) {
+                        violations[violation['id']]['urls'].push(audit.url);
+                    }
                 });
             });
         }
