@@ -143,6 +143,13 @@ export function parseA11yJson(data: Object) {
 
             violation['nodes'].forEach((node: []) => {
                 node['target'].forEach((target: string) => {
+                    if (new RegExp(/^#c\d+ > /).test(target)) {
+                        const parts = target.split(' > ', 2);
+                        if (parts.length > 0) {
+                            target = target.replace(parts[0] + ' > ', '');
+                        }
+                    }
+
                     if (!violations[violation['id']]['targets'].includes(target)) {
                         violations[violation['id']]['targets'].push(target);
                     }
