@@ -179,5 +179,5 @@ export function sanitizeString(input: string) {
         .replace(/[\s\W-]+/g, '-')
         .toLowerCase();
 
-    return sanitizedString === '' ? 'index' : sanitizedString;
+    return sanitizedString === '' ? 'startpage' : sanitizedString;
 }

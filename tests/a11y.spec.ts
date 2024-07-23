@@ -22,6 +22,8 @@ test('key templates', async ({ page, context }) => {
         [key: number]: Errors;
     } = {};
 
+    const pages: string[] = [];
+
     for (let [key, option] of Object.entries(opts)) {
         await page.goto(option.url);
 
@@ -54,14 +56,33 @@ test('key templates', async ({ page, context }) => {
                     reportFileName: `${sanitizeString(option.url)}.html`,
                 },
             });
+
+            pages.push(`${sanitizeString(option.url)}.html`);
         }
     }
+
+    let htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>All Reports</title>
+        </head>
+        <body>
+            <ul>
+                ${pages.map(page => `<li><a href="${page}">${page}</a></li>`).join('\n')}
+            </ul>
+        </body>
+        </html>
+    `;
 
     if (Object.keys(errors).length > 0) {
         const errorsComplete = JSON.stringify(errors, null, 2);
         fs.writeFileSync('./a11y-reports/a11y-audit-complete.json', errorsComplete);
         fs.writeFileSync('./a11y-reports/a11y-audit-compact.json', parseA11yJson(errors));
     }
+
+    fs.writeFileSync('./a11y-reports/index.html', htmlContent);
 
     expect(Object.keys(errors).length).toEqual(0);
 });
