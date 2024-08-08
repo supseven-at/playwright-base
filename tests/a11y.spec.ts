@@ -70,7 +70,7 @@ test('key templates', async ({ page, context }) => {
         </head>
         <body>
             <ul>
-                ${pages.map(page => `<li><a href="${page}">${page}</a></li>`).join('\n')}
+                ${pages.map((page) => `<li><a href="${page}">${page}</a></li>`).join('\n')}
             </ul>
         </body>
         </html>

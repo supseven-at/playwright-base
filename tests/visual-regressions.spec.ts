@@ -3,11 +3,11 @@ import { setCookie, getFileName, getOptions } from '../functions/global-function
 
 test.describe.serial('visual regression', () => {
     test('reference (might fail in the first run)', async ({ page, context }, testInfo) => {
-        await setCookie(context, process.env.COOKIE_VALUE, process.env.REGRESSION_BASE_URL);
+        await setCookie(context, process.env.COOKIE_VALUE, process.env.LIVE_BASE_URL);
         const opts = await getOptions();
 
         for (let [key, option] of Object.entries(opts)) {
-            await page.goto(process.env.REGRESSION_BASE_URL + option.url);
+            await page.goto(process.env.LIVE_BASE_URL + option.url);
             await page.waitForLoadState('networkidle');
             const fileName = (await getFileName(option.url)) + '.png';
 

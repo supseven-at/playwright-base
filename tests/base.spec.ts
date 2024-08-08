@@ -8,6 +8,13 @@ test('has title', async ({ page, context }) => {
     await expect(page).toHaveTitle(process.env.TEST_TITLE);
 });
 
+test('prod/live has no develop class', async ({ page, context }) => {
+    await setCookie(context);
+
+    await page.goto(process.env.LIVE_BASE_URL);
+    await expect(page.locator('body')).not.toHaveClass('develop');
+});
+
 test('consent', async ({ page }) => {
     await page.goto('/');
 
