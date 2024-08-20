@@ -1,5 +1,7 @@
 import { Context } from 'node:vm';
 import axios from 'axios';
+import * as https from 'node:https';
+import { parseStringPromise } from 'xml2js';
 
 /**
  * Sets a cookie in the given context.
@@ -10,19 +12,12 @@ import axios from 'axios';
  *
  * @return {Promise<void>} - A promise that resolves when the cookie is set.
  */
-export async function setCookie(context: Context, cValue = process.env.COOKIE_VALUE, url = process.env.BASE_URL) {
+export async function setCookie(
+    context: Context,
+    cValue: string = process.env.COOKIE_VALUE,
+    url: string = process.env.BASE_URL,
+): Promise<void> {
     await context.addCookies([{ name: process.env.COOKIE_NAME, value: cValue, url: url }]);
-}
-
-/**
- * Get the path from a given URL.
- *
- * @param {string} url - The URL to extract the path from.
- * @return {string} The path of the URL.
- */
-export function getPathFromUrl(url: string) {
-    const urlObj = new URL(url);
-    return urlObj.pathname;
 }
 
 /**
@@ -31,12 +26,15 @@ export function getPathFromUrl(url: string) {
  * @param {string} htmlContent - The HTML content to be validated.
  * @returns {Promise} - A promise that resolves with the validation response data.
  */
-export async function validateHTML(htmlContent) {
+export async function validateHTML(htmlContent: string): Promise<any> {
     try {
-        const response = await axios.post('https://validator.w3.org/nu/?out=json', htmlContent, {
+        const response = await axios.post(process.env.W3C_URL, htmlContent, {
             headers: {
                 'Content-Type': 'text/html; charset=utf-8',
             },
+            httpsAgent: new https.Agent({
+                rejectUnauthorized: false,
+            }),
         });
 
         return response.data;
@@ -50,17 +48,34 @@ export async function validateHTML(htmlContent) {
  *
  * @returns {Promise<{[key: number]: ComparisonOption}>} The options extracted from environment variables.
  */
-export async function getOptions() {
+export async function getOptions(checkFromSitemap: boolean = false): Promise<any> {
     type ComparisonOption = {
         url?: string;
         maxDiffPixelRatio?: number;
         maxDiffPixels?: number;
         disabled?: boolean;
+        lighthouse?: boolean;
     };
 
     const opts: {
         [key: number]: ComparisonOption;
     } = {};
+
+    const sitemapFile = process.env.SITEMAP_URL;
+
+    let urls: string[];
+    urls = await getUrlsFromSitemap(sitemapFile);
+
+    if (checkFromSitemap) {
+        urls.forEach((url, index) => {
+            if (!opts[index]) {
+                opts[index] = {};
+            }
+            opts[index]['url'] = url;
+        });
+
+        return opts;
+    }
 
     for (const key in process.env) {
         if (key.startsWith('KEY_URL_')) {
@@ -71,28 +86,12 @@ export async function getOptions() {
             opts[index]['url'] = process.env[key];
         }
 
-        if (key.startsWith('REGRESSION_RATIO_')) {
-            const index = parseInt(key.replace('REGRESSION_RATIO_', ''), 10);
+        if (key.startsWith('LIGHTHOUSE_')) {
+            const index = parseInt(key.replace('LIGHTHOUSE_', ''), 10);
             if (!opts[index]) {
                 opts[index] = {};
             }
-            opts[index]['maxDiffPixelRatio'] = parseFloat(process.env[key]);
-        }
-
-        if (key.startsWith('REGRESSION_PIXEL_')) {
-            const index = parseInt(key.replace('REGRESSION_PIXEL_', ''), 10);
-            if (!opts[index]) {
-                opts[index] = {};
-            }
-            opts[index]['maxDiffPixels'] = parseInt(process.env[key]);
-        }
-
-        if (key.startsWith('REGRESSION_DISABLED_')) {
-            const index = parseInt(key.replace('REGRESSION_DISABLED_', ''), 10);
-            if (!opts[index]) {
-                opts[index] = {};
-            }
-            opts[index]['disabled'] = !!process.env[key];
+            opts[index]['lighthouse'] = !!process.env[key];
         }
     }
 
@@ -180,4 +179,22 @@ export function sanitizeString(input: string) {
         .toLowerCase();
 
     return sanitizedString === '' ? 'startpage' : sanitizedString;
+}
+
+/**
+ * Retrieves the URLs from a sitemap XML file.
+ *
+ * @param {string} url - The URL of the sitemap XML file to be retrieved.
+ * @return {Promise<string[]>} - A promise that resolves with an array of URLs from the sitemap XML file.
+ */
+export async function getUrlsFromSitemap(url: string): Promise<string[]> {
+    const response = await axios.get(url, {
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false,
+        }),
+    });
+    const xmlContent = response.data;
+    const result = await parseStringPromise(xmlContent);
+
+    return result.urlset.url.map((url: any) => url.loc[0]);
 }

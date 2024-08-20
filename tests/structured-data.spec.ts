@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { setCookie } from '../functions/global-functions';
 
 // beispiel test um strukturierte daten zu testen.
 // aktuell gibts keine api für das automatisierte testen, man muss also händisch einen
 // test gegen das gefetchte json schreiben.
 test('EXAMPLE: structured data', async ({ page, context }) => {
-    await page.goto('/karriere/offene-stellen/detail/verkaufsberaterin-im-aussendienst-kaernten-und-steiermark/');
+    await page.goto('/karriere/offene-stellen/detail/verkaufsberaterin-im-aussendienst-2/');
+    await setCookie(context);
 
     const structuredData = await page.evaluate(() => {
         const scriptElement = document.querySelector('script[type="application/ld+json"]');

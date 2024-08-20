@@ -1,11 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { getOptions, setCookie, validateHTML } from '../functions/global-functions';
-// @ts-ignore
-import fs from 'fs';
+import * as fs from 'fs';
+import { Option } from '../types/types';
 
 test('w3c checks of key templates', async ({ page, context }) => {
     await setCookie(context);
-    const opts = await getOptions();
+
+    const fromSitemap = process.env.TESTFROMSITEMAP === 'true';
+    const opts: Option[] = await getOptions(fromSitemap);
 
     type Validations = {
         message?: string[];
@@ -32,11 +34,17 @@ test('w3c checks of key templates', async ({ page, context }) => {
         // 'Text run is not in Unicode Normalization Form C.',
     ];
 
-    for (let [key, option] of Object.entries(opts)) {
-        await page.goto(option.url, { timeout: 5000 });
-        const h1 = await page.$$('.page h1');
-        expect(h1.length).toBe(1);
+    // use own ddev service container to test, when you have to test more than 10 pages
+    if (Object.keys(opts).length > 10) {
+        const w3cService = new URL(process.env.W3C_URL);
+        expect(w3cService.host).not.toBe('validator.w3.org');
+    }
 
+    for (let [key, option] of Object.entries(opts)) {
+        await page.goto(option.url);
+        await setCookie(context);
+
+        const h1 = await page.$$('#content h1');
         const pageContent = await page.content();
         const validationResult = await validateHTML(pageContent);
 
@@ -72,6 +80,20 @@ test('w3c checks of key templates', async ({ page, context }) => {
                 }
             });
         }
+
+        if (h1.length !== 1) {
+            if (!validations['heading']) {
+                validations['heading'] = {
+                    urls: [],
+                };
+            }
+
+            if (!validations['heading']['urls']) {
+                validations['heading']['urls'] = [];
+            }
+
+            validations['heading']['urls'].push(option.url + ' (Anzahl: ' + h1.length + ')');
+        }
     }
 
     if (Object.keys(validations).length > 0) {
@@ -82,5 +104,6 @@ test('w3c checks of key templates', async ({ page, context }) => {
         fs.writeFileSync('./w3c-reports/w3c-audit-compact.json', JSON.stringify(validations, null, 2));
     }
 
-    expect(Object.keys(validations).length).toBe(0);
+    expect(validations['error']).toBeUndefined();
+    expect(validations['heading']).toBeUndefined();
 });

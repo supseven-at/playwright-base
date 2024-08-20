@@ -1,15 +1,14 @@
 import { expect, test } from '@playwright/test';
 import { getOptions, parseA11yJson, sanitizeString, setCookie } from '../functions/global-functions';
 import AxeBuilder from '@axe-core/playwright';
-// @ts-ignore
-import fs from 'fs';
+import * as fs from 'fs';
 import { createHtmlReport } from 'axe-html-reporter';
+import { Option } from '../types/types';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 test('key templates', async ({ page, context }) => {
-    await setCookie(context);
-    const opts = await getOptions();
+    const opts: Option[] = await getOptions();
 
     type Errors = {
         url?: string;
@@ -25,6 +24,7 @@ test('key templates', async ({ page, context }) => {
     const pages: string[] = [];
 
     for (let [key, option] of Object.entries(opts)) {
+        await setCookie(context);
         await page.goto(option.url);
 
         // activate reduced motion
@@ -51,7 +51,7 @@ test('key templates', async ({ page, context }) => {
             createHtmlReport({
                 results: { violations: accessibilityScanResults.violations },
                 options: {
-                    projectKey: 'MERA: ' + option.url,
+                    projectKey: process.env.BASE_URL + ': ' + option.url,
                     outputDir: 'a11y-reports',
                     reportFileName: `${sanitizeString(option.url)}.html`,
                 },
@@ -77,12 +77,15 @@ test('key templates', async ({ page, context }) => {
     `;
 
     if (Object.keys(errors).length > 0) {
+        if (!fs.existsSync('./a11y-reports')) {
+            fs.mkdirSync('./a11y-reports');
+        }
+
         const errorsComplete = JSON.stringify(errors, null, 2);
         fs.writeFileSync('./a11y-reports/a11y-audit-complete.json', errorsComplete);
         fs.writeFileSync('./a11y-reports/a11y-audit-compact.json', parseA11yJson(errors));
+        fs.writeFileSync('./a11y-reports/index.html', htmlContent);
     }
-
-    fs.writeFileSync('./a11y-reports/index.html', htmlContent);
 
     expect(Object.keys(errors).length).toEqual(0);
 });

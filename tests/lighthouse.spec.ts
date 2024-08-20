@@ -2,25 +2,28 @@ import { expect, test } from '@playwright/test';
 import { playAudit } from 'playwright-lighthouse';
 import { getOptions, setCookie } from '../functions/global-functions';
 import { config } from '../lighthouse.config';
+import { Option } from '../types/types';
 
 test('lighthouse', async ({ page, context }) => {
-    await setCookie(context);
-    const opts = await getOptions();
+    const opts: Option[] = await getOptions();
 
     for (let [key, option] of Object.entries(opts)) {
-        await page.goto(option.url);
+        if (option.lighthouse === true) {
+            await setCookie(context);
+            await page.goto(option.url);
 
-        await playAudit({
-            page: page,
-            port: 9222,
-            config: config,
-            thresholds: {
-                performance: 90,
-                accessibility: 90,
-                'best-practices': 90,
-                seo: 90,
-            },
-            disableLogs: true,
-        });
+            await playAudit({
+                page: page,
+                port: 9222,
+                config: config,
+                thresholds: {
+                    performance: 100,
+                    accessibility: 100,
+                    'best-practices': 100,
+                    seo: 100,
+                },
+                disableLogs: false,
+            });
+        }
     }
 });
