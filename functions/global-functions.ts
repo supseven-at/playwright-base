@@ -63,10 +63,10 @@ export async function getOptions(checkFromSitemap: boolean = false): Promise<any
 
     const sitemapFile = process.env.SITEMAP_URL;
 
-    let urls: string[];
-    urls = await getUrlsFromSitemap(sitemapFile);
-
     if (checkFromSitemap) {
+        let urls: string[];
+        urls = await getUrlsFromSitemap(sitemapFile);
+
         urls.forEach((url, index) => {
             if (!opts[index]) {
                 opts[index] = {};
